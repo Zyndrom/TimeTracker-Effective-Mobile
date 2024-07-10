@@ -1,0 +1,350 @@
+basePath: /
+definitions:
+  Task:
+    properties:
+      created_at:
+        example: "2024-07-09T18:15:32.579945Z"
+        type: string
+      duration:
+        example: 120
+        type: integer
+      id:
+        example: 1
+        type: integer
+      is_active:
+        example: true
+        type: boolean
+      name:
+        example: string
+        type: string
+      updated_at:
+        example: "2024-07-09T18:15:32.579945Z"
+        type: string
+      user:
+        $ref: '#/definitions/User'
+    type: object
+  User:
+    properties:
+      address:
+        example: string
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: string
+        type: string
+      passportNumber:
+        example: 1234 567890
+        type: string
+      patronymic:
+        example: string
+        type: string
+      surname:
+        example: string
+        type: string
+    type: object
+  internal_router.addNewUserBody:
+    properties:
+      passportNumber:
+        example: 1234 567890
+        type: string
+    type: object
+  internal_router.startExistedTaskBody:
+    properties:
+      task_id:
+        type: integer
+    type: object
+  internal_router.startNewTaskBody:
+    properties:
+      name:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  internal_router.stopTaskBody:
+    properties:
+      task_id:
+        type: integer
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact: {}
+  description: Time Tracker.
+  title: Time Tracker
+  version: "1.0"
+paths:
+  /tasks/start-existed:
+    post:
+      consumes:
+      - application/json
+      description: Resumes an existing
+      parameters:
+      - description: Task details
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router.startExistedTaskBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task Started
+          schema:
+            type: string
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Task'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Resumes Existed Task
+  /tasks/start-new:
+    post:
+      consumes:
+      - application/json
+      description: Starts a new task
+      parameters:
+      - description: Task details
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router.startNewTaskBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task Started
+          schema:
+            type: string
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/Task'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Start New Task
+  /tasks/stop:
+    post:
+      consumes:
+      - application/json
+      description: Stop an active task
+      parameters:
+      - description: Task stop request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router.stopTaskBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Stopped task
+          schema:
+            $ref: '#/definitions/Task'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Stop a task
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of users based on query parameters
+      parameters:
+      - description: ID
+        in: query
+        name: id
+        type: string
+      - description: name
+        in: query
+        name: name
+        type: string
+      - description: passportNumber
+        in: query
+        name: passportNumber
+        type: string
+      - description: surname
+        in: query
+        name: surname
+        type: string
+      - description: patronymic
+        in: query
+        name: patronymic
+        type: string
+      - description: address
+        in: query
+        name: address
+        type: string
+      - description: page
+        in: query
+        name: page
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: string
+      - description: offset
+        in: query
+        name: offset
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users
+          schema:
+            items:
+              $ref: '#/definitions/User'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Get users
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the given passport number
+      parameters:
+      - description: User creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_router.addNewUserBody'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created user
+          schema:
+            $ref: '#/definitions/User'
+        "400":
+          description: Bad request
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Add a new user
+  /users/{user}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: user
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User Deleted
+          schema:
+            type: string
+        "400":
+          description: user not exist
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a user
+    put:
+      consumes:
+      - application/json
+      description: Update user information by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: user
+        required: true
+        type: integer
+      - description: User update information
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User Updated
+          schema:
+            type: string
+        "400":
+          description: user not exist
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Update a user
+  /users/{user}/workhours:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves sorted tasks and work hours for a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: user
+        required: true
+        type: integer
+      - description: Date From
+        in: query
+        name: dateFrom
+        type: string
+      - description: Date To
+        in: query
+        name: dateTo
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of sorted tasks
+          schema:
+            items:
+              $ref: '#/definitions/Task'
+            type: array
+        "400":
+          description: Bad request
+          schema:
+            type: string
+      summary: Get work hours by user
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
